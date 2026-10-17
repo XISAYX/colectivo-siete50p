@@ -1,0 +1,35 @@
+---
+import "@/styles/global.css";
+import Seo from "@/components/astro/Seo.astro";
+import WhatsAppButton from "@/components/react/WhatsAppButton.tsx";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Colectivo Siete50",
+  description = "Narrativa, marca y experiencia.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" class="dark">
+  <head>
+    <Seo title={title} description={description} />
+  </head>
+  <body class="min-h-screen bg-background font-sans text-foreground antialiased relative">
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-100 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground"
+    >
+      Saltar al contenido
+    </a>
+    
+    <slot />
+
+    {/* Botón flotante de WhatsApp activo en todo el sitio */}
+    <WhatsAppButton client:idle />
+  </body>
+</html>

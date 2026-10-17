@@ -1,0 +1,27 @@
+---
+interface Props {
+  src?: string;
+  poster?: string;
+  class?: string;
+}
+
+const { src, poster, class: className } = Astro.props;
+---
+
+{
+  src ? (
+    <video
+      class={className}
+      poster={poster}
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="none"
+    >
+      <source src={src} type="video/mp4" />
+    </video>
+  ) : poster ? (
+    <img src={poster} alt="" class={className} loading="eager" decoding="async" />
+  ) : null
+}

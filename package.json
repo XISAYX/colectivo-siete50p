@@ -1,7 +1,7 @@
 {
-  "name": "cosmic-chroma",
+  "name": "colectivo-siete50",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -9,20 +9,40 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "check": "astro check",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "^8.0.3",
+    "@astrojs/node": "^11.1.7",
     "@astrojs/react": "^7.0.1",
+    "@astrojs/vercel": "^11.0.15",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@hookform/resolvers": "^5.9.1",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/canvas-confetti": "^1.9.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "astro": "^7.3.8",
-    "canvas-confetti": "^1.9.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cn": "^0.4.0",
+    "framer-motion": "^14.1.0",
+    "lucide-react": "^1.55.0",
+    "nodemailer": "^10.1.2",
+    "ogl": "^1.0.11",
+    "radix-ui": "^1.8.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "react-hook-form": "^7.90.0",
+    "shadcn": "^4.21.4",
+    "tailwind-merge": "^3.7.0",
     "tailwindcss": "^4.3.3",
-    "vite": "^8.3.3"
+    "tw-animate-css": "^1.4.0",
+    "vite": "^8.3.3",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/nodemailer": "^8.0.2",
+    "typescript": "^6.0.3"
   }
 }
