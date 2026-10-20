@@ -140,13 +140,19 @@
     border-color: #000000 !important;
   }
 
+  /* Ocultar barra de desplazamiento lateral manteniendo el scroll funcional */
   html {
     background-color: #000000 !important;
     color: var(--ink);
-    scrollbar-gutter: stable;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE y Edge */
     scroll-behavior: smooth;
     overflow-x: clip;
     @apply font-sans;
+  }
+
+  html::-webkit-scrollbar {
+    display: none; /* Chrome, Safari y Opera */
   }
 
   body {
@@ -205,22 +211,4 @@ section {
 ::selection {
   background-color: var(--color-accent);
   color: #000000;
-}
-
-/* Barra de desplazamiento personalizada */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #000000;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #1a1a1a;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-accent);
 }

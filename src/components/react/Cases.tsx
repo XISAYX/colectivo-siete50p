@@ -10,6 +10,7 @@ export default function Cases() {
   const [active, setActive] = React.useState(0);
   const [muted, setMuted] = React.useState(true);
   const [isTitleHovered, setIsTitleHovered] = useState(false);
+  const [isPartnersHovered, setIsPartnersHovered] = useState(false); // Efecto hover para Partners
   const containerRef = React.useRef<HTMLDivElement>(null);
   const inView = useInView(containerRef, { amount: 0.35 });
 
@@ -32,6 +33,46 @@ export default function Cases() {
     {
       title: "CASO 04",
       fallbackVideo: "/c4.webm",
+    },
+  ];
+
+  // Lista de aliados / partners con sus años correspondientes y escalas equilibradas
+  const partners = [
+    {
+      name: "Ayuntamiento Actopan",
+      logo: "/actopan.webp",
+      years: "10 Años",
+      scale: "scale-150",
+    },
+    {
+      name: "Cinemanías",
+      logo: "/cinemanias.webp",
+      years: "8 Años",
+      scale: "scale-150",
+    },
+    {
+      name: "Casa Fotia",
+      logo: "/fotiaL.webp",
+      years: "6 Años",
+      scale: "scale-[1.8]",
+    },
+    {
+      name: "Itacate",
+      logo: "/itacateL.webp",
+      years: "6 Años",
+      scale: "scale-[1.8]",
+    },
+    {
+      name: "La Perla",
+      logo: "/PerlaL.webp",
+      years: "8 Años",
+      scale: "scale-150",
+    },
+    {
+      name: "Vicke",
+      logo: "/vicke.webp",
+      years: "10 Años",
+      scale: "scale-100",
     },
   ];
 
@@ -79,7 +120,7 @@ export default function Cases() {
           — Hechos a tu medida —
         </span>
 
-        {/* TÍTULO PRINCIPAL: MÁS GRANDE Y CON EL MISMO DISEÑO DE HOVER */}
+        {/* TÍTULO PRINCIPAL: PARA TI (CON EFECTO HOVER) */}
         <div
           onMouseEnter={() => setIsTitleHovered(true)}
           onMouseLeave={() => setIsTitleHovered(false)}
@@ -222,7 +263,7 @@ export default function Cases() {
         </div>
 
         {/* INDICADORES DE PUNTOS */}
-        <div className="flex items-center justify-center gap-2.5 mt-10">
+        <div className="flex items-center justify-center gap-2.5 mt-10 mb-28">
           {carouselItems.map((_, dotIdx) => (
             <button
               key={dotIdx}
@@ -235,6 +276,81 @@ export default function Cases() {
               aria-label={`Ir a diapositiva ${dotIdx + 1}`}
             />
           ))}
+        </div>
+
+        {/* SECCIÓN DE MARCAS QUE HAN CRECIDO CON SIETE50 */}
+        <div className="w-full pt-16 border-t border-white/10 flex flex-col items-center">
+          <div className="flex items-center gap-4 mb-3">
+            <span className="w-8 h-[2px] bg-[#e8b800]"></span>
+            <span className="text-xs uppercase tracking-[0.3em] text-[#e8b800] font-semibold">
+              Trayectoria
+            </span>
+            <span className="w-8 h-[2px] bg-[#e8b800]"></span>
+          </div>
+
+          {/* TÍTULO PRINCIPAL CON EFECTO HOVER IDÉNTICO AL DE "PARA TI" */}
+          <div
+            onMouseEnter={() => setIsPartnersHovered(true)}
+            onMouseLeave={() => setIsPartnersHovered(false)}
+            className="text-3xl md:text-5xl font-black tracking-tight uppercase mb-4 cursor-pointer select-none py-2"
+          >
+            <motion.div
+              animate={{
+                filter: isPartnersHovered
+                  ? "drop-shadow(0 0 30px rgba(255,230,128,0.9)) drop-shadow(0 0 12px rgba(232,184,0,0.8))"
+                  : "drop-shadow(0 0 0px rgba(0,0,0,0))",
+              }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className={isPartnersHovered ? "text-transparent" : "text-white"}
+            >
+              <span
+                className={
+                  isPartnersHovered
+                    ? "bg-gradient-to-r from-black via-[#e8b800] to-white bg-clip-text text-transparent transition-all duration-300"
+                    : "text-white transition-all duration-300"
+                }
+              >
+                MARCAS HAN CRECIDO
+              </span>{" "}
+              <span
+                className={
+                  isPartnersHovered
+                    ? "bg-gradient-to-r from-black via-[#ffe680] to-white bg-clip-text text-transparent transition-all duration-300"
+                    : "text-[#e8b800] transition-all duration-300"
+                }
+              >
+                CON SIETE50
+              </span>
+            </motion.div>
+          </div>
+
+          <p className="max-w-2xl text-gray-400 text-sm md:text-base font-light leading-relaxed mb-24 text-center">
+            Somos un socio estratégico, construimos relaciones a largo plazo con
+            nuestros clientes a través del desarrollo de sistemas integrales de
+            comunicación.
+          </p>
+
+          {/* GRID DE LOGOS Y AÑOS EN AMARILLO CORPORATIVO */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-24 gap-x-12 w-full max-w-4xl items-center">
+            {partners.map((partner, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center justify-center gap-5 group"
+              >
+                <div className="h-16 flex items-center justify-center">
+                  <img
+                    src={partner.logo}
+                    alt={partner.name}
+                    className={`max-h-16 w-auto object-contain opacity-70 group-hover:opacity-100 transition-all duration-300 ${partner.scale}`}
+                  />
+                </div>
+                {/* AÑOS EN AMARILLO CORPORATIVO */}
+                <span className="text-sm font-bold tracking-wider text-[#e8b800] uppercase">
+                  {partner.years}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

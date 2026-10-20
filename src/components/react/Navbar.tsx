@@ -50,12 +50,12 @@ export default function Navbar() {
       <style>{`
         :root {
           --brand-yellow: #e8b800;
-          --line: #000000;
           --text: #ffffff;
           --soft: rgba(255, 255, 255, 0.8);
           --ease: cubic-bezier(0.22, 1, 0.36, 1);
         }
 
+        /* Navbar 100% transparente y limpio en todo momento */
         .navbar-header {
           position: fixed;
           top: 0;
@@ -66,8 +66,11 @@ export default function Navbar() {
           color: var(--text);
           transform: translate3d(0,0,0);
           backface-visibility: hidden;
-          background: #000000 !important;
+          background: transparent !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
           border: none !important;
+          box-shadow: none !important;
         }
 
         .hide-outside-hero {
@@ -89,7 +92,7 @@ export default function Navbar() {
           justify-content: space-between;
           align-items: center;
           position: relative;
-          background: #000000 !important;
+          background: transparent !important;
           border: none !important;
         }
 
@@ -185,8 +188,10 @@ export default function Navbar() {
             top: 76px;
             left: 0;
             right: 0;
-            background: #000000 !important;
-            border: none !important;
+            background: rgba(0, 0, 0, 0.92) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 24px;
             transform: translateY(-20px);
             display: flex;
@@ -209,7 +214,6 @@ export default function Navbar() {
 
       <header className="navbar-header" id="header" ref={headerRef}>
         <div className="bar">
-          {/* Logo redirige directamente a la página principal */}
           <a
             href="/"
             className={`logo ${!isHeroActive ? "hide-outside-hero" : ""}`}
@@ -232,7 +236,6 @@ export default function Navbar() {
           >
             <ul className="links">
               <li>
-                {/* Inicio redirige a la página principal */}
                 <a
                   className="plain-link"
                   href="/"
@@ -274,7 +277,6 @@ export default function Navbar() {
             </ul>
           </nav>
 
-          {/* Botón de menú responsive */}
           <div className="actions">
             <button
               className="menu-btn"

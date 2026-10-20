@@ -10,8 +10,14 @@ const { name, nav, email, city, socials } = siteConfig;
 
 <Layout title={`Contacto — ${name}`} description="Ponte en contacto con Colectivo Siete50">
   <Navbar client:load brand={name} links={nav} />
-  <main id="contenido" class="pt-24 pb-16">
-    <ContactSection client:load />
+  
+  <main id="contenido" class="w-full min-h-screen flex items-center justify-center bg-black pt-24 pb-16">
+    <div class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+      <div class="w-full flex justify-center">
+        <ContactSection client:load />
+      </div>
+    </div>
   </main>
+
   <Footer name={name} email={email} city={city} socials={socials} />
 </Layout>
