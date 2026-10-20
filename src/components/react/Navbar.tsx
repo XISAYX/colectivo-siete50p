@@ -50,7 +50,7 @@ export default function Navbar() {
       <style>{`
         :root {
           --brand-yellow: #e8b800;
-          --line: rgba(255, 255, 255, 0.1);
+          --line: #000000;
           --text: #ffffff;
           --soft: rgba(255, 255, 255, 0.8);
           --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -66,6 +66,8 @@ export default function Navbar() {
           color: var(--text);
           transform: translate3d(0,0,0);
           backface-visibility: hidden;
+          background: #000000 !important;
+          border: none !important;
         }
 
         .hide-outside-hero {
@@ -87,6 +89,8 @@ export default function Navbar() {
           justify-content: space-between;
           align-items: center;
           position: relative;
+          background: #000000 !important;
+          border: none !important;
         }
 
         .logo {
@@ -181,9 +185,8 @@ export default function Navbar() {
             top: 76px;
             left: 0;
             right: 0;
-            background: rgba(10, 12, 16, 0.96);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--line);
+            background: #000000 !important;
+            border: none !important;
             padding: 24px;
             transform: translateY(-20px);
             display: flex;
@@ -206,9 +209,9 @@ export default function Navbar() {
 
       <header className="navbar-header" id="header" ref={headerRef}>
         <div className="bar">
-          {/* Logo con enlace directo al Hero */}
+          {/* Logo redirige directamente a la página principal */}
           <a
-            href="#hero"
+            href="/"
             className={`logo ${!isHeroActive ? "hide-outside-hero" : ""}`}
             aria-label="Home"
           >
@@ -229,9 +232,10 @@ export default function Navbar() {
           >
             <ul className="links">
               <li>
+                {/* Inicio redirige a la página principal */}
                 <a
                   className="plain-link"
-                  href="#hero"
+                  href="/"
                   onClick={() => setIsMobileOpen(false)}
                 >
                   Inicio
@@ -241,7 +245,7 @@ export default function Navbar() {
               <li>
                 <a
                   className="plain-link"
-                  href="#divisions"
+                  href="/#servicios"
                   onClick={() => setIsMobileOpen(false)}
                 >
                   Servicios
@@ -251,15 +255,14 @@ export default function Navbar() {
               <li>
                 <a
                   className="plain-link"
-                  href="#colaboradores"
+                  href="/#nosotros"
                   onClick={() => setIsMobileOpen(false)}
                 >
-                  Colaboradores
+                  Nosotros
                 </a>
               </li>
 
               <li>
-                {/* Modificado únicamente para apuntar a la página independiente */}
                 <a
                   className="plain-link"
                   href="/contacto"

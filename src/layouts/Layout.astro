@@ -33,3 +33,10 @@ const {
     <WhatsAppButton client:idle />
   </body>
 </html>
+
+<style is:global>
+  /* Fuerza a que cualquier borde superior o línea divisoria invisible desaparezca */
+  *, ::before, ::after {
+    border-top-color: transparent !important;
+  }
+</style>
