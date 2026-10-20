@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 
 function wrapIndex(i: number, count: number) {
@@ -7,33 +7,22 @@ function wrapIndex(i: number, count: number) {
 }
 
 export default function Cases() {
-  const [active, setActive] = React.useState(0);
+  const [active, setActive] = useState(0);
   const [isTitleHovered, setIsTitleHovered] = useState(false);
   const [isPartnersHovered, setIsPartnersHovered] = useState(false);
 
   const containerRef = React.useRef<HTMLDivElement>(null);
+  // Detecta con precisión cuándo la sección de casos está a la vista en la pantalla
   const inView = useInView(containerRef, { amount: 0.3 });
 
-  // Referencias para controlar la reproducción de cada video en el carrusel
+  // Referencias para controlar cada etiqueta <video> de forma individual
   const videoRefs = React.useRef<(HTMLVideoElement | null)[]>([]);
 
   const carouselItems = [
-    {
-      title: "CASO 01",
-      fallbackVideo: "/c1.webm",
-    },
-    {
-      title: "CASO 02",
-      fallbackVideo: "/c2.webm",
-    },
-    {
-      title: "CASO 03",
-      fallbackVideo: "/c3.webm",
-    },
-    {
-      title: "CASO 04",
-      fallbackVideo: "/c4.webm",
-    },
+    { title: "CASO 01", fallbackVideo: "/c1.webm" },
+    { title: "CASO 02", fallbackVideo: "/c2.webm" },
+    { title: "CASO 03", fallbackVideo: "/c3.webm" },
+    { title: "CASO 04", fallbackVideo: "/c4.webm" },
   ];
 
   const partners = [
@@ -85,29 +74,28 @@ export default function Cases() {
     [count],
   );
 
-  // Reproducción inteligente optimizada para iOS (iPhone) y navegadores web
-  React.useEffect(() => {
+  // Control estricto: Solo el video central (diff === 0) tiene sonido, y solo si la sección está en pantalla en PC
+  useEffect(() => {
+    // Detectamos si es un dispositivo móvil o PC mediante el ancho de pantalla
+    const isMobile = window.innerWidth < 768;
+
     videoRefs.current.forEach((v, i) => {
       if (!v) return;
       const isActive = i === active && inView;
+
       if (isActive) {
-        // En móviles iOS se requiere iniciar en mute para garantizar autoplay, luego se activa el sonido si el navegador lo permite
-        v.muted = true;
         v.playsInline = true;
         v.loop = true;
-        v.play()
-          .then(() => {
-            // Intentamos activar el sonido tras iniciar la reproducción fluida
-            v.muted = false;
-          })
-          .catch(() => {
-            // Si el navegador bloquea el audio, se mantiene en mute para asegurar que el video nunca se quede en negro
-            v.muted = true;
-            v.play().catch(() => {});
-          });
+        // En PC activamos el sonido solo si está a la vista; en móvil se mantiene en silencio para evitar bloqueos del navegador
+        v.muted = isMobile || !inView;
+        v.play().catch(() => {
+          v.muted = true;
+          v.play().catch(() => {});
+        });
       } else {
+        // Los videos laterales o inactivos siempre están pausados y silenciados
         v.pause();
-        v.currentTime = 0;
+        v.muted = true;
       }
     });
   }, [active, inView]);
@@ -170,7 +158,7 @@ export default function Cases() {
           Facebook.
         </p>
 
-        {/* CARRUSEL 3D SIN BOTÓN DE SONIDO */}
+        {/* CARRUSEL 3D */}
         <div className="relative w-full max-w-[850px] h-[480px] flex items-center justify-center">
           <div className="relative w-full h-full flex items-center justify-center perspective-[1400px]">
             {carouselItems.map((item, i) => {
@@ -237,17 +225,16 @@ export default function Cases() {
                     transformStyle: "preserve-3d",
                   }}
                 >
-                  {/* Contenedor del video optimizado para iPhone y web sin elementos molestos */}
                   <div className="relative w-full h-full rounded-[22px] overflow-hidden bg-neutral-950 flex items-center justify-center">
                     <video
                       ref={(el) => {
                         videoRefs.current[i] = el;
                       }}
                       src={item.fallbackVideo}
-                      muted={true}
+                      // Forzamos silencio absoluto en los videos laterales o inactivos
+                      muted={!isActive}
                       playsInline
                       webkit-playsinline="true"
-                      autoPlay
                       loop
                       preload="auto"
                       className="w-full h-full object-cover"
