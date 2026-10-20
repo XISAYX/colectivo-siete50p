@@ -2,7 +2,6 @@
 import OptimizedVideo from "@/components/astro/OptimizedVideo.astro";
 import About from "@/components/react/About";
 import Cases from "@/components/react/Cases";
-import ContactSection from "@/components/react/ContactSection";
 import Divisions from "@/components/react/Divisions";
 import Footer from "@/components/react/Footer";
 import Hero from "@/components/react/Hero";
@@ -25,7 +24,6 @@ const { name, tagline, description, nav, divisions, cases, email, city, socials 
     <About client:visible />
     <Divisions client:visible items={divisions} />
     <Cases client:visible items={cases} />
-    <ContactSection client:load />
   </main>
   <Footer name={name} email={email} city={city} socials={socials} />
 </Layout>

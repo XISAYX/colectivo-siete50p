@@ -259,9 +259,10 @@ export default function Navbar() {
               </li>
 
               <li>
+                {/* Modificado únicamente para apuntar a la página independiente */}
                 <a
                   className="plain-link"
-                  href="#contact"
+                  href="/contacto"
                   onClick={() => setIsMobileOpen(false)}
                 >
                   Contacto

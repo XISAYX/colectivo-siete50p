@@ -1,0 +1,17 @@
+---
+import ContactSection from "@/components/react/ContactSection";
+import Footer from "@/components/react/Footer";
+import Navbar from "@/components/react/Navbar";
+import { siteConfig } from "@/data/site";
+import Layout from "@/layouts/Layout.astro";
+
+const { name, nav, email, city, socials } = siteConfig;
+---
+
+<Layout title={`Contacto — ${name}`} description="Ponte en contacto con Colectivo Siete50">
+  <Navbar client:load brand={name} links={nav} />
+  <main id="contenido" class="pt-24 pb-16">
+    <ContactSection client:load />
+  </main>
+  <Footer name={name} email={email} city={city} socials={socials} />
+</Layout>
