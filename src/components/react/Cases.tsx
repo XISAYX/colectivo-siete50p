@@ -8,11 +8,11 @@ function wrapIndex(i: number, count: number) {
 
 export default function Cases() {
   const [active, setActive] = React.useState(0);
-  const [muted, setMuted] = React.useState(true);
   const [isTitleHovered, setIsTitleHovered] = useState(false);
-  const [isPartnersHovered, setIsPartnersHovered] = useState(false); // Efecto hover para Partners
+  const [isPartnersHovered, setIsPartnersHovered] = useState(false);
+
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const inView = useInView(containerRef, { amount: 0.35 });
+  const inView = useInView(containerRef, { amount: 0.3 });
 
   // Referencias para controlar la reproducción de cada video en el carrusel
   const videoRefs = React.useRef<(HTMLVideoElement | null)[]>([]);
@@ -36,7 +36,6 @@ export default function Cases() {
     },
   ];
 
-  // Lista de aliados / partners con sus años correspondientes y escalas equilibradas
   const partners = [
     {
       name: "Ayuntamiento Actopan",
@@ -86,22 +85,32 @@ export default function Cases() {
     [count],
   );
 
-  // Reproducción inteligente: solo reproduce el video activo al frente
+  // Reproducción inteligente optimizada para iOS (iPhone) y navegadores web
   React.useEffect(() => {
     videoRefs.current.forEach((v, i) => {
       if (!v) return;
       const isActive = i === active && inView;
       if (isActive) {
-        v.muted = muted;
+        // En móviles iOS se requiere iniciar en mute para garantizar autoplay, luego se activa el sonido si el navegador lo permite
+        v.muted = true;
         v.playsInline = true;
         v.loop = true;
-        v.play().catch(() => {});
+        v.play()
+          .then(() => {
+            // Intentamos activar el sonido tras iniciar la reproducción fluida
+            v.muted = false;
+          })
+          .catch(() => {
+            // Si el navegador bloquea el audio, se mantiene en mute para asegurar que el video nunca se quede en negro
+            v.muted = true;
+            v.play().catch(() => {});
+          });
       } else {
         v.pause();
-        v.muted = true;
+        v.currentTime = 0;
       }
     });
-  }, [active, inView, muted]);
+  }, [active, inView]);
 
   return (
     <section
@@ -120,7 +129,7 @@ export default function Cases() {
           — Hechos a tu medida —
         </span>
 
-        {/* TÍTULO PRINCIPAL: PARA TI (CON EFECTO HOVER) */}
+        {/* TÍTULO PRINCIPAL: PARA TI */}
         <div
           onMouseEnter={() => setIsTitleHovered(true)}
           onMouseLeave={() => setIsTitleHovered(false)}
@@ -161,7 +170,7 @@ export default function Cases() {
           Facebook.
         </p>
 
-        {/* CARRUSEL 3D */}
+        {/* CARRUSEL 3D SIN BOTÓN DE SONIDO */}
         <div className="relative w-full max-w-[850px] h-[480px] flex items-center justify-center">
           <div className="relative w-full h-full flex items-center justify-center perspective-[1400px]">
             {carouselItems.map((item, i) => {
@@ -228,29 +237,17 @@ export default function Cases() {
                     transformStyle: "preserve-3d",
                   }}
                 >
-                  {/* Botón Mute solo en la tarjeta frontal */}
-                  {isActive && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMuted(!muted);
-                      }}
-                      className="absolute top-4 right-4 z-50 w-9 h-9 rounded-full bg-black/60 backdrop-blur-md shadow-md flex items-center justify-center text-white hover:bg-black/80 transition cursor-pointer border border-white/20"
-                      aria-label="Control de audio"
-                    >
-                      {muted ? "🔇" : "🔊"}
-                    </button>
-                  )}
-
-                  {/* Video del Carrusel */}
-                  <div className="relative w-full h-full rounded-[22px] overflow-hidden bg-black flex items-center justify-center">
+                  {/* Contenedor del video optimizado para iPhone y web sin elementos molestos */}
+                  <div className="relative w-full h-full rounded-[22px] overflow-hidden bg-neutral-950 flex items-center justify-center">
                     <video
                       ref={(el) => {
                         videoRefs.current[i] = el;
                       }}
                       src={item.fallbackVideo}
-                      muted={isActive ? muted : true}
+                      muted={true}
                       playsInline
+                      webkit-playsinline="true"
+                      autoPlay
                       loop
                       preload="auto"
                       className="w-full h-full object-cover"
@@ -280,15 +277,10 @@ export default function Cases() {
 
         {/* SECCIÓN DE MARCAS QUE HAN CRECIDO CON SIETE50 */}
         <div className="w-full pt-16 border-t border-white/10 flex flex-col items-center">
-          <div className="flex items-center gap-4 mb-3">
-            <span className="w-8 h-[2px] bg-[#e8b800]"></span>
-            <span className="text-xs uppercase tracking-[0.3em] text-[#e8b800] font-semibold">
-              Trayectoria
-            </span>
-            <span className="w-8 h-[2px] bg-[#e8b800]"></span>
-          </div>
+          <span className="text-xs uppercase tracking-[0.3em] text-[#e8b800] mb-3 font-semibold">
+            — Trayectoria —
+          </span>
 
-          {/* TÍTULO PRINCIPAL CON EFECTO HOVER IDÉNTICO AL DE "PARA TI" */}
           <div
             onMouseEnter={() => setIsPartnersHovered(true)}
             onMouseLeave={() => setIsPartnersHovered(false)}
@@ -324,27 +316,25 @@ export default function Cases() {
             </motion.div>
           </div>
 
-          <p className="max-w-2xl text-gray-400 text-sm md:text-base font-light leading-relaxed mb-24 text-center">
+          <p className="max-w-2xl text-gray-400 text-sm md:text-base font-light leading-relaxed mb-20 text-center">
             Somos un socio estratégico, construimos relaciones a largo plazo con
             nuestros clientes a través del desarrollo de sistemas integrales de
             comunicación.
           </p>
 
-          {/* GRID DE LOGOS Y AÑOS EN AMARILLO CORPORATIVO */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-24 gap-x-12 w-full max-w-4xl items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-20 gap-x-12 w-full max-w-4xl items-center">
             {partners.map((partner, index) => (
               <div
                 key={index}
-                className="flex flex-col items-center justify-center gap-5 group"
+                className="flex flex-col items-center justify-center gap-4 group"
               >
                 <div className="h-16 flex items-center justify-center">
                   <img
                     src={partner.logo}
                     alt={partner.name}
-                    className={`max-h-16 w-auto object-contain opacity-70 group-hover:opacity-100 transition-all duration-300 ${partner.scale}`}
+                    className={`max-h-16 w-auto object-contain opacity-60 group-hover:opacity-100 transition-all duration-300 ${partner.scale}`}
                   />
                 </div>
-                {/* AÑOS EN AMARILLO CORPORATIVO */}
                 <span className="text-sm font-bold tracking-wider text-[#e8b800] uppercase">
                   {partner.years}
                 </span>
