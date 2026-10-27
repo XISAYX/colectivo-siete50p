@@ -1,22 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 
-function wrapIndex(i: number, count: number) {
+function wrapIndex(i, count) {
   if (count <= 0) return 0;
   return ((i % count) + count) % count;
 }
 
 export default function Cases() {
   const [active, setActive] = useState(0);
-  const [isTitleHovered, setIsTitleHovered] = useState(false);
-  const [isPartnersHovered, setIsPartnersHovered] = useState(false);
 
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  // Detecta con precisión cuándo la sección de casos está a la vista en la pantalla
-  const inView = useInView(containerRef, { amount: 0.3 });
+  const containerRef = React.useRef(null);
+  // Detecta con precisión cuándo la sección de casos está visible en la pantalla
+  const inView = useInView(containerRef, { amount: 0.2 });
 
   // Referencias para controlar cada etiqueta <video> de forma individual
-  const videoRefs = React.useRef<(HTMLVideoElement | null)[]>([]);
+  const videoRefs = React.useRef([]);
 
   const carouselItems = [
     { title: "CASO 01", fallbackVideo: "/c1.webm" },
@@ -67,33 +65,40 @@ export default function Cases() {
   const count = carouselItems.length;
 
   const goTo = React.useCallback(
-    (nextRaw: number) => {
+    (nextRaw) => {
       const next = wrapIndex(nextRaw, count);
       React.startTransition(() => setActive(next));
     },
     [count],
   );
 
-  // Control estricto: Solo el video central (diff === 0) tiene sonido, y solo si la sección está en pantalla en PC
+  // Control estricto de reproducción y sonido:
+  // - Solo suena y se reproduce el video central (active) si la sección está en vista (inView).
+  // - Si bajas al footer o sales de la sección, se pausan y silencian de inmediato.
   useEffect(() => {
-    // Detectamos si es un dispositivo móvil o PC mediante el ancho de pantalla
     const isMobile = window.innerWidth < 768;
 
     videoRefs.current.forEach((v, i) => {
       if (!v) return;
-      const isActive = i === active && inView;
+
+      if (!inView) {
+        v.pause();
+        v.muted = true;
+        return;
+      }
+
+      const isActive = i === active;
 
       if (isActive) {
         v.playsInline = true;
         v.loop = true;
-        // En PC activamos el sonido solo si está a la vista; en móvil se mantiene en silencio para evitar bloqueos del navegador
-        v.muted = isMobile || !inView;
+        // Sonido activado en PC si está a la vista; en móvil silenciado por políticas del navegador
+        v.muted = isMobile;
         v.play().catch(() => {
           v.muted = true;
           v.play().catch(() => {});
         });
       } else {
-        // Los videos laterales o inactivos siempre están pausados y silenciados
         v.pause();
         v.muted = true;
       }
@@ -106,51 +111,21 @@ export default function Cases() {
       ref={containerRef}
       className="relative z-30 w-full bg-black pb-28 pt-10 px-6 md:px-12 overflow-hidden text-white"
       style={{
+        fontFamily: "'Montserrat', sans-serif",
         transform: "translate3d(0,0,0)",
         backfaceVisibility: "hidden",
         contain: "layout style paint",
       }}
     >
-      <div className="relative z-30 max-w-5xl mx-auto flex flex-col items-center text-center">
-        {/* SUBTÍTULO Y ENCABEZADO */}
-        <span className="text-xs uppercase tracking-[0.3em] text-[#e8b800] mb-4 font-semibold">
-          — Hechos a tu medida —
+      <div className="relative z-30 max-w-4xl mx-auto flex flex-col items-center text-center">
+        {/* HECHOS A TU MEDIDA */}
+        <span className="text-xs uppercase tracking-[0.3em] text-[#e8b800] mb-4 font-bold">
+          — Hechos A Tu Medida —
         </span>
 
-        {/* TÍTULO PRINCIPAL: PARA TI */}
-        <div
-          onMouseEnter={() => setIsTitleHovered(true)}
-          onMouseLeave={() => setIsTitleHovered(false)}
-          className="text-4xl md:text-6xl font-black tracking-tight uppercase mb-4 cursor-pointer select-none py-2"
-        >
-          <motion.div
-            animate={{
-              filter: isTitleHovered
-                ? "drop-shadow(0 0 30px rgba(255,230,128,0.9)) drop-shadow(0 0 12px rgba(232,184,0,0.8))"
-                : "drop-shadow(0 0 0px rgba(0,0,0,0))",
-            }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className={isTitleHovered ? "text-transparent" : "text-white"}
-          >
-            <span
-              className={
-                isTitleHovered
-                  ? "bg-gradient-to-r from-black via-[#e8b800] to-white bg-clip-text text-transparent transition-all duration-300"
-                  : "text-white transition-all duration-300"
-              }
-            >
-              PARA
-            </span>{" "}
-            <span
-              className={
-                isTitleHovered
-                  ? "bg-gradient-to-r from-black via-[#ffe680] to-white bg-clip-text text-transparent transition-all duration-300"
-                  : "text-white transition-all duration-300"
-              }
-            >
-              TI
-            </span>
-          </motion.div>
+        {/* PARA TI */}
+        <div className="text-4xl md:text-6xl font-black tracking-tight mb-4 text-white">
+          Para Ti
         </div>
 
         <p className="max-w-3xl text-gray-400 text-sm md:text-base font-light leading-relaxed mb-16">
@@ -231,7 +206,6 @@ export default function Cases() {
                         videoRefs.current[i] = el;
                       }}
                       src={item.fallbackVideo}
-                      // Forzamos silencio absoluto en los videos laterales o inactivos
                       muted={!isActive}
                       playsInline
                       webkit-playsinline="true"
@@ -262,45 +236,16 @@ export default function Cases() {
           ))}
         </div>
 
-        {/* SECCIÓN DE MARCAS QUE HAN CRECIDO CON SIETE50 */}
+        {/* SECCIÓN DE TRAYECTORIA / MARCAS */}
         <div className="w-full pt-16 border-t border-white/10 flex flex-col items-center">
-          <span className="text-xs uppercase tracking-[0.3em] text-[#e8b800] mb-3 font-semibold">
+          {/* TRAYECTORIA */}
+          <span className="text-xs uppercase tracking-[0.3em] text-[#e8b800] mb-4 font-semibold">
             — Trayectoria —
           </span>
 
-          <div
-            onMouseEnter={() => setIsPartnersHovered(true)}
-            onMouseLeave={() => setIsPartnersHovered(false)}
-            className="text-3xl md:text-5xl font-black tracking-tight uppercase mb-4 cursor-pointer select-none py-2"
-          >
-            <motion.div
-              animate={{
-                filter: isPartnersHovered
-                  ? "drop-shadow(0 0 30px rgba(255,230,128,0.9)) drop-shadow(0 0 12px rgba(232,184,0,0.8))"
-                  : "drop-shadow(0 0 0px rgba(0,0,0,0))",
-              }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className={isPartnersHovered ? "text-transparent" : "text-white"}
-            >
-              <span
-                className={
-                  isPartnersHovered
-                    ? "bg-gradient-to-r from-black via-[#e8b800] to-white bg-clip-text text-transparent transition-all duration-300"
-                    : "text-white transition-all duration-300"
-                }
-              >
-                MARCAS HAN CRECIDO
-              </span>{" "}
-              <span
-                className={
-                  isPartnersHovered
-                    ? "bg-gradient-to-r from-black via-[#ffe680] to-white bg-clip-text text-transparent transition-all duration-300"
-                    : "text-[#e8b800] transition-all duration-300"
-                }
-              >
-                CON SIETE50
-              </span>
-            </motion.div>
+          {/* MARCAS QUE HAN CRECIDO CON SIETE50 (TODO BLANCO) */}
+          <div className="text-3xl md:text-5xl font-black tracking-tight mb-4 select-none py-2 text-white">
+            Marcas Que Han Crecido Con Siete50
           </div>
 
           <p className="max-w-2xl text-gray-400 text-sm md:text-base font-light leading-relaxed mb-20 text-center">

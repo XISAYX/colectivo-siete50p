@@ -62,6 +62,7 @@ export default function Footer({
     <footer
       className="relative w-full bg-black text-white py-12 px-4 sm:px-8 md:px-12 lg:px-16 border-t border-white/10 overflow-hidden z-30"
       style={{
+        fontFamily: "'Montserrat', sans-serif",
         transform: "translate3d(0,0,0)",
         backfaceVisibility: "hidden",
         contain: "layout style paint",
