@@ -36,7 +36,6 @@ interface HeroProps {
   autoPlay?: boolean;
   loop?: boolean;
   muted?: boolean;
-  backgroundImage?: string;
   animationStiffness?: number;
   animationDamping?: number;
   animationMass?: number;
@@ -47,7 +46,6 @@ export default function Hero({
   autoPlay = true,
   loop = true,
   muted = true,
-  backgroundImage = "/fondohero.webp",
   animationStiffness = 180,
   animationDamping = 35,
   animationMass = 0.2,
@@ -113,7 +111,6 @@ export default function Hero({
     restDelta: 0.00001,
   });
 
-  // Forzar reproducción y evitar bloqueos en móviles
   useEffect(() => {
     const videoEl = videoRef.current;
     if (!videoEl) return;
@@ -169,51 +166,213 @@ export default function Hero({
           backfaceVisibility: "hidden",
         }}
       >
-        {/* FONDO TIPOGRÁFICO FIJO */}
+        {/* BLOQUE TIPOGRÁFICO MAESTRO MANUAL */}
         <div
           style={{
             position: "absolute",
             inset: 0,
             width: "100%",
             height: "100%",
+            zIndex: 1,
+            pointerEvents: "none",
+            fontFamily: "'Montserrat', sans-serif",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            zIndex: 1,
-            padding: "3vw",
-            pointerEvents: "none",
+            userSelect: "none",
           }}
         >
-          <motion.img
-            src={backgroundImage}
-            alt="Fondo tipográfico Colectivo Siete50"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={
-              mounted ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }
-            }
-            transition={{
-              duration: 0.8,
-              ease: [0.16, 1, 0.3, 1],
+          <motion.div
+            initial="hidden"
+            animate={mounted ? "visible" : "hidden"}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+              },
             }}
-            style={{
-              maxWidth: "85vw",
-              maxHeight: "80vh",
-              width: "auto",
-              height: "auto",
-              objectFit: "contain",
-              willChange: "opacity",
-            }}
-            draggable={false}
-          />
+            className="relative flex flex-col items-center justify-center w-full px-4"
+          >
+            <div className="relative flex flex-col w-[50rem] max-w-[95vw]">
+              {/* ========================================== */}
+              {/* 1. ideas */}
+              {/* ========================================== */}
+              <div
+                className="w-full text-left z-10"
+                style={{ marginTop: "0rem" }}
+              >
+                <motion.span
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+                    },
+                  }}
+                  className="font-black text-white uppercase sm:lowercase inline-block"
+                  style={{
+                    fontSize: "clamp(5.5rem, 11.6vw, 11.5rem)",
+                    lineHeight: 0.75,
+                    letterSpacing: "-0.05em",
+                    marginLeft: "17rem",
+                  }}
+                >
+                  ideas
+                </motion.span>
+              </div>
+
+              {/* ========================================== */}
+              {/* 2. que mueven */}
+              {/* ========================================== */}
+              <div
+                className="w-full text-left z-30"
+                style={{ marginTop: "-1.5rem" }}
+              >
+                <motion.span
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+                    },
+                  }}
+                  className="font-black text-[#e8b800] inline-block"
+                  style={{
+                    fontSize: "clamp(4.5rem, 3.8vw, 4rem)",
+                    lineHeight: 1,
+                    letterSpacing: "-0.025em",
+                    marginLeft: "17rem",
+                  }}
+                >
+                  que mueven
+                </motion.span>
+              </div>
+
+              {/* ========================================== */}
+              {/* 3. marcas */}
+              {/* ========================================== */}
+              <div
+                className="w-full text-left z-20"
+                style={{ marginTop: "-1.8rem" }}
+              >
+                <motion.span
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+                    },
+                  }}
+                  className="font-black text-white inline-block"
+                  style={{
+                    fontSize: "clamp(4.5rem, 10.5vw, 11.5rem)",
+                    lineHeight: 0.75,
+                    letterSpacing: "-0.05em",
+                    marginLeft: "10rem",
+                  }}
+                >
+                  marcas
+                </motion.span>
+              </div>
+
+              {/* ========================================== */}
+              {/* 4. estrategias */}
+              {/* ========================================== */}
+              <div
+                className="w-full text-left z-10"
+                style={{ marginTop: "-1rem" }}
+              >
+                <motion.span
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+                    },
+                  }}
+                  className="font-light text-white inline-block whitespace-nowrap relative"
+                  style={{
+                    fontSize: "clamp(3.8rem, 7.5vw, 10rem)",
+                    lineHeight: 0.75,
+                    letterSpacing: "-0.025em",
+                    marginLeft: "10rem",
+                  }}
+                >
+                  estrategias
+                </motion.span>
+              </div>
+
+              {/* ========================================== */}
+              {/* 5. que generan */}
+              {/* ========================================== */}
+              <div
+                className="w-full text-left z-30"
+                style={{ marginTop: "-0.7rem" }}
+              >
+                <motion.span
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+                    },
+                  }}
+                  className="font-black text-[#e8b800] inline-block"
+                  style={{
+                    fontSize: "clamp(1.5rem, 3.8vw, 4rem)",
+                    lineHeight: 1,
+                    letterSpacing: "-0.025em",
+                    marginLeft: "10rem",
+                  }}
+                >
+                  que generan
+                </motion.span>
+              </div>
+
+              {/* ========================================== */}
+              {/* 6. impacto */}
+              {/* ========================================== */}
+              <div
+                className="w-full text-left z-10"
+                style={{ marginTop: "-1.4rem" }}
+              >
+                <motion.span
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+                    },
+                  }}
+                  className="font-black text-white inline-block"
+                  style={{
+                    fontSize: "clamp(4.5rem, 11.5vw, 11.5rem)",
+                    lineHeight: 0.75,
+                    letterSpacing: "-0.05em",
+                    marginLeft: "6rem",
+                  }}
+                >
+                  impacto
+                </motion.span>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
-        {/* CONTENEDOR DEL VIDEO */}
+        {/* CONTENEDOR DEL VIDEO CENTRAL */}
         <div
           style={{
             position: "relative",
             width: "100%",
             height: "100%",
-            zIndex: 2,
+            zIndex: 25,
             pointerEvents: "none",
           }}
         >
@@ -251,6 +410,7 @@ export default function Hero({
                 loop={loop}
                 muted={muted}
                 playsInline
+                // @ts-ignore
                 webkit-playsinline="true"
                 preload="auto"
                 style={{

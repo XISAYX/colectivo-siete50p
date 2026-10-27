@@ -1,20 +1,10 @@
 import React, { useEffect, useRef } from "react";
 
-// The main App component that encapsulates the animation
-// In React, component names must start with a capital letter to be recognized as components.
-// I've renamed the function from "component" to "TubesCursor".
 export default function TubesCursor() {
-  // useRef to get a persistent reference to the canvas element
-  const canvasRef = useRef(null);
-  // useRef to hold the animation instance so we can call its methods
-  const appRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const appRef = useRef<any>(null);
 
-  /**
-   * Generates an array of random hex color strings.
-   * @param {number} count - The number of random colors to generate.
-   * @returns {string[]} An array of color strings.
-   */
-  const randomColors = (count) => {
+  const randomColors = (count: number) => {
     return new Array(count).fill(0).map(
       () =>
         "#" +
@@ -24,21 +14,17 @@ export default function TubesCursor() {
     );
   };
 
-  // This effect runs once when the component mounts
   useEffect(() => {
-    // The error "Computed radius is NaN" suggests a race condition where the animation
-    // library initializes before the canvas element has its final dimensions, leading
-    // to invalid geometry calculations. Delaying the initialization with setTimeout
-    // ensures the DOM is fully painted and ready.
+    let isMounted = true;
+
     const initTimer = setTimeout(() => {
       import("https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js")
         .then((module) => {
-          const TubesCursor = module.default;
+          if (!isMounted) return;
+          const TubesCursorFn = module.default;
 
-          // Ensure the canvas element is still available before initializing
           if (canvasRef.current) {
-            // Initialize the TubesCursor animation
-            const app = TubesCursor(canvasRef.current, {
+            const app = TubesCursorFn(canvasRef.current, {
               tubes: {
                 colors: ["#5e72e4", "#8965e0", "#f5365c"],
                 lights: {
@@ -47,45 +33,54 @@ export default function TubesCursor() {
                 },
               },
             });
-            // Store the instance in our ref for later use
             appRef.current = app;
           }
         })
         .catch((err) =>
           console.error("Failed to load TubesCursor module:", err),
         );
-    }, 100); // 100ms delay to allow for DOM rendering
+    }, 100);
 
-    // Cleanup function to dispose of the animation and clear the timeout
+    const handleClick = () => {
+      if (appRef.current) {
+        const newTubeColors = randomColors(3);
+        const newLightColors = randomColors(4);
+        if (appRef.current.tubes) {
+          appRef.current.tubes.setColors(newTubeColors);
+          appRef.current.tubes.setLightsColors(newLightColors);
+        }
+      }
+    };
+
+    window.addEventListener("click", handleClick);
+
     return () => {
+      isMounted = false;
       clearTimeout(initTimer);
-      // Check if app was initialized and has a dispose method before calling
+      window.removeEventListener("click", handleClick);
       if (appRef.current && typeof appRef.current.dispose === "function") {
         appRef.current.dispose();
       }
     };
-  }, []); // The empty dependency array ensures this effect runs only once
-
-  // Handles click events on the main container
-  const handleClick = () => {
-    if (appRef.current) {
-      const newTubeColors = randomColors(3);
-      const newLightColors = randomColors(4);
-
-      // Update the colors in the running animation
-      appRef.current.tubes.setColors(newTubeColors);
-      appRef.current.tubes.setLightsColors(newLightColors);
-    }
-  };
+  }, []);
 
   return (
-    // Main container with full-screen styles and click handler
     <div
-      onClick={handleClick}
-      className="h-screen w-screen bg-black font-['Montserrat',_sans-serif] overflow-hidden cursor-pointer"
+      className="fixed inset-0 w-screen h-screen bg-black font-['Montserrat',_sans-serif] overflow-hidden pointer-events-none z-0"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        zIndex: 0,
+      }}
     >
-      {/* Canvas element for the animation, positioned behind everything else */}
-      <canvas ref={canvasRef} className="fixed inset-0 z-0" />
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full block pointer-events-auto cursor-pointer"
+        style={{ width: "100%", height: "100%" }}
+      />
     </div>
   );
 }
